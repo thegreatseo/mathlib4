@@ -181,6 +181,22 @@ lemma pderiv_sumAlgEquiv {R S₁ S₂ : Type*} [CommSemiring R]
     pderiv b (sumAlgEquiv R S₁ S₂ p) = sumAlgEquiv R S₁ S₂ (pderiv (Sum.inl b) p) :=
   pderiv_sumRingEquiv ..
 
+theorem pderiv_comm (i j : σ) (p : MvPolynomial σ R) :
+    pderiv i (pderiv j p) = pderiv j (pderiv i p) := by
+  classical
+  by_cases h : i = j
+  · subst j
+    rfl
+  have h' : j ≠ i := Ne.symm h
+  ext m
+  simp only [coeff_pderiv, Finsupp.add_apply, Finsupp.single_apply, h, h', ↓reduceIte]
+  have hs : m + Finsupp.single i 1 + Finsupp.single j 1 =
+      m + Finsupp.single j 1 + Finsupp.single i 1 := by
+    ac_rfl
+  rw [hs]
+  simp only [add_zero, mul_assoc]
+  rw [mul_comm (↑(m i) + 1 : R) (↑(m j) + 1 : R)]
+
 end PDeriv
 
 end MvPolynomial
